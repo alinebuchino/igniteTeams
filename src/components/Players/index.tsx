@@ -6,10 +6,11 @@ import { Input } from "@components/Input";
 import { Filter } from "@components/Filter";
 import { FlatList } from "react-native";
 import { useState } from "react";
+import { PlayersCard } from "@components/PlayersCard";
 
 export function Players() {
   const [team, setTeam] = useState("Time A");
-  const [playes, setPlayes] = useState([]);
+  const [playes, setPlayes] = useState(["Aline", "Lê"]);
 
   return (
     <Container>
@@ -39,6 +40,14 @@ export function Players() {
         />
         <NumbersOfPlayers>{playes.length}</NumbersOfPlayers>
       </HeaderList>
+
+      <FlatList
+        data={playes}
+        keyExtractor={(item) => item}
+        renderItem={({ item }) => (
+          <PlayersCard name={item} onRemove={() => {}} />
+        )}
+      />
     </Container>
   );
 }
