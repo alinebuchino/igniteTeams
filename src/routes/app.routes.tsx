@@ -5,9 +5,9 @@ import { NewGroup } from "@screens/NewGroup";
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
-export function routes() {
+export function AppRoutes() {
   return (
-    <Navigator>
+    <Navigator screenOptions={{ headerShown: false }}>
       <Screen name="groups" component={Groups} />
 
       <Screen name="new" component={NewGroup} />
