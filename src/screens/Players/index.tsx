@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Alert, FlatList } from "react-native";
+import { Alert, FlatList, Keyboard } from "react-native";
 import { useRoute } from "@react-navigation/native";
 
 import { Container, Form, HeaderList, NumbersOfPlayers } from "./styles";
@@ -16,6 +16,7 @@ import { AppError } from "@utils/AppError";
 import { playerAddByGroup } from "@storage/player/playerAddByGroup";
 import { playersGetByGroupAndTeam } from "@storage/player/playersGetByGroupAndTeam";
 import { PlayerStorageDTO } from "@storage/player/PlayerStorageDTO";
+import { playerRemoveByGroup } from "@storage/player/playerRemoveByGroup";
 
 type RouteParams = {
   group: string;
@@ -41,6 +42,7 @@ export function Players() {
     try {
       await playerAddByGroup(newPlayer, group);
       setNewPlayerName("");
+      Keyboard.dismiss();
       fetchPlayersByTeam();
     } catch (error) {
       if (error instanceof AppError) {
@@ -68,6 +70,19 @@ export function Players() {
     }
   }
 
+  async function handleRemovePlayer(playerName: string) {
+    try {
+      await playerRemoveByGroup(playerName, group);
+      fetchPlayersByTeam();
+    } catch (error) {
+      console.log(error);
+      Alert.alert(
+        "Remover Participante",
+        "Não foi possível remover o participante"
+      );
+    }
+  }
+
   useEffect(() => {
     fetchPlayersByTeam();
   }, [team]);
@@ -83,6 +98,8 @@ export function Players() {
           value={newPlayerName}
           placeholder="Nome da pessoa"
           autoCorrect={false}
+          onSubmitEditing={handleAddPlayer}
+          returnKeyType="done"
         />
         <ButtonIcon icon="add" onPress={handleAddPlayer} />
       </Form>
@@ -107,7 +124,10 @@ export function Players() {
         data={playes}
         keyExtractor={(item) => item.name}
         renderItem={({ item }) => (
-          <PlayersCard name={item.name} onRemove={() => {}} />
+          <PlayersCard
+            name={item.name}
+            onRemove={() => handleRemovePlayer(item.name)}
+          />
         )}
         ListEmptyComponent={() => (
           <ListEmpty message="Não há pessoas nesse time!" />
